@@ -60,7 +60,10 @@ desplegarse gratis en **Vercel**.
    | Nombre | Valor |
    |---|---|
    | `NEXT_PUBLIC_SUPABASE_URL` | tu Project URL |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | tu clave anon public |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | tu clave *publishable* (`sb_publishable_…`) |
+
+   > Si tu proyecto usa la clave clásica `anon` (empieza por `eyJ…`), puedes ponerla en
+   > `NEXT_PUBLIC_SUPABASE_ANON_KEY`; la app acepta ambos nombres.
 
 4. Pulsa **Deploy**. En un par de minutos tendrás una dirección tipo
    `https://viaje-japon.vercel.app`.

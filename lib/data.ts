@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type {
   BudgetItem,
   ItineraryActivity,
@@ -11,10 +12,7 @@ import type {
 
 /** ¿Están configuradas las variables de Supabase? */
 export function isConfigured(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
+  return isSupabaseConfigured;
 }
 
 const DEFAULT_START = "2026-10-01";

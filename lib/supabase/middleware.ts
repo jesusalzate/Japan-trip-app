@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { SUPABASE_URL, SUPABASE_KEY } from "@/lib/supabase/config";
 
 /**
  * Refresca la sesión de Supabase en cada petición y protege las rutas.
@@ -10,8 +11,8 @@ export async function updateSession(request: NextRequest) {
 
   // Si faltan las variables de entorno (p. ej. antes de configurar Supabase),
   // no bloqueamos la petición para no romper la app.
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = SUPABASE_URL;
+  const key = SUPABASE_KEY;
   if (!url || !key) return supabaseResponse;
 
   const supabase = createServerClient(url, key, {
