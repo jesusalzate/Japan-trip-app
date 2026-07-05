@@ -51,6 +51,31 @@ export async function deleteTask(id: string) {
   revalidatePath("/");
 }
 
+export async function updateTaskDetails(
+  id: string,
+  data: {
+    title: string;
+    description: string;
+    category: TaskCategory;
+    due_date: string;
+  },
+) {
+  const { supabase } = await db();
+  const title = data.title.trim();
+  if (!title) return;
+  await supabase
+    .from("tasks")
+    .update({
+      title,
+      description: data.description.trim() || null,
+      category: data.category,
+      due_date: data.due_date || null,
+    })
+    .eq("id", id);
+  revalidatePath("/tareas");
+  revalidatePath("/");
+}
+
 // ---------------------- Itinerario ----------------------
 
 export async function updateDayNotes(id: string, notes: string) {
