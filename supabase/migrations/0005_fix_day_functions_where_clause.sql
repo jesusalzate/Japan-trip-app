@@ -1,12 +1,17 @@
 -- =====================================================================
---  Viaje a Japón — Añadir y eliminar días del itinerario.
---  Ejecutar DESPUÉS de 0001_schema.sql, 0002_itinerary_transport.sql y seed.sql.
+--  Viaje a Japón — Corrige "UPDATE requires a WHERE clause".
 --
---  Los días se numeran de forma secuencial (1..N) sin huecos, porque la
---  fecha de cada día se calcula como start_date + (day_number - 1). Estas
---  funciones insertan/eliminan un día y renumeran el resto según haga falta,
---  evitando el conflicto de la restricción UNIQUE(day_number) al pasar
---  primero por valores negativos (que nunca chocan con los positivos).
+--  Este proyecto de Supabase tiene activada una protección que bloquea
+--  cualquier UPDATE/DELETE sin cláusula WHERE (para evitar modificar una
+--  tabla entera por accidente). Las funciones de 0003_itinerary_day_management.sql
+--  tenían una línea que actualiza sort_order en todas las filas a propósito,
+--  sin WHERE, y esa protección la bloqueaba. Aquí se añade "where true"
+--  (una condición siempre verdadera) para cumplir el requisito sin cambiar
+--  el comportamiento.
+--
+--  Ejecutar DESPUÉS de 0003_itinerary_day_management.sql.
+--  Reemplaza (CREATE OR REPLACE) las mismas dos funciones; es seguro
+--  ejecutarlo varias veces.
 -- =====================================================================
 
 create or replace function public.insert_itinerary_day(
@@ -24,7 +29,6 @@ begin
     raise exception 'p_after_day_number no puede ser negativo';
   end if;
 
-  -- Abre hueco: desplaza +1 todos los días posteriores al punto de inserción.
   update public.itinerary_days set day_number = -day_number where day_number > p_after_day_number;
   update public.itinerary_days set day_number = -day_number + 1 where day_number < 0;
 
@@ -32,8 +36,6 @@ begin
   values (p_after_day_number + 1, coalesce(nullif(trim(p_title), ''), 'Nuevo día'), p_city, p_summary, p_after_day_number + 1)
   returning * into v_new_day;
 
-  -- "where true" es intencional: sincroniza sort_order en todas las filas.
-  -- Algunos proyectos de Supabase exigen WHERE en todo UPDATE/DELETE.
   update public.itinerary_days set sort_order = day_number where true;
 
   return v_new_day;
@@ -47,11 +49,9 @@ as $$
 begin
   delete from public.itinerary_days where day_number = p_day_number;
 
-  -- Cierra el hueco: desplaza -1 todos los días posteriores.
   update public.itinerary_days set day_number = -day_number where day_number > p_day_number;
   update public.itinerary_days set day_number = -day_number - 1 where day_number < 0;
 
-  -- "where true" es intencional: sincroniza sort_order en todas las filas.
   update public.itinerary_days set sort_order = day_number where true;
 end;
 $$;

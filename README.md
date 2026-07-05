@@ -35,7 +35,7 @@ desplegarse gratis en **Vercel**.
 
 ### 2) Crear las tablas y cargar los datos del viaje
 
-Ejecuta estos cinco scripts **en este orden**, cada uno en una **New query** nueva del
+Ejecuta estos seis scripts **en este orden**, cada uno en una **New query** nueva del
 **SQL Editor** (icono `</>` en el menú lateral) → pega el contenido completo → **Run**:
 
 1. [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) — crea las tablas,
@@ -48,11 +48,15 @@ Ejecuta estos cinco scripts **en este orden**, cada uno en una **New query** nue
    las listas.
 5. [`supabase/migrations/0004_task_subtasks.sql`](supabase/migrations/0004_task_subtasks.sql) —
    añade las subtareas (checklist) dentro de cada tarea.
+6. [`supabase/migrations/0005_fix_day_functions_where_clause.sql`](supabase/migrations/0005_fix_day_functions_where_clause.sql) —
+   corrige un error ("UPDATE requires a WHERE clause") al añadir/eliminar días.
 
 Cada uno debe terminar sin errores antes de pasar al siguiente.
 
 > ¿Ya tenías la app funcionando y solo quieres añadir alguna novedad? Ejecuta únicamente el
-> script correspondiente (2, 3 o 5) — son seguros de repetir o ejecutar sobre datos ya cargados.
+> script correspondiente (2, 3, 5 o 6) — son seguros de repetir o ejecutar sobre datos ya cargados.
+> **Si al añadir o eliminar un día del itinerario te sale el error "UPDATE requires a WHERE
+> clause"**, es porque falta ejecutar el script **6** — corrige justo eso.
 
 ### 3) Crear nuestras dos cuentas y cerrar el registro
 
@@ -135,6 +139,7 @@ supabase/
   migrations/0002_itinerary_transport.sql   Campo de transporte por día
   migrations/0003_itinerary_day_management.sql   Añadir/eliminar días del itinerario
   migrations/0004_task_subtasks.sql   Subtareas (checklist) dentro de cada tarea
+  migrations/0005_fix_day_functions_where_clause.sql   Corrige el error "UPDATE requires a WHERE clause"
   seed.sql                     Contenido del viaje (itinerario, tareas, presupuesto, listas)
 ```
 
