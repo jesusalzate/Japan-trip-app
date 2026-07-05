@@ -132,15 +132,23 @@ export async function updateDayDetails(
 
 export async function addItineraryDay(afterDayNumber: number) {
   const { supabase } = await db();
-  await supabase.rpc("insert_itinerary_day", {
+  const { error } = await supabase.rpc("insert_itinerary_day", {
     p_after_day_number: afterDayNumber,
   });
+  if (error) {
+    throw new Error(`No se pudo añadir el día: ${error.message}`);
+  }
   revalidatePath("/itinerario");
 }
 
 export async function deleteItineraryDay(dayNumber: number) {
   const { supabase } = await db();
-  await supabase.rpc("delete_itinerary_day", { p_day_number: dayNumber });
+  const { error } = await supabase.rpc("delete_itinerary_day", {
+    p_day_number: dayNumber,
+  });
+  if (error) {
+    throw new Error(`No se pudo eliminar el día: ${error.message}`);
+  }
   revalidatePath("/itinerario");
 }
 
