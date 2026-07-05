@@ -1,8 +1,9 @@
-import { getTasks, isConfigured } from "@/lib/data";
+import { getTasks, getTaskSubtasks, isConfigured } from "@/lib/data";
 import { TaskItem } from "@/components/task-item";
 import { AddTaskForm } from "@/components/add-task-form";
 import { SetupNotice } from "@/components/setup-notice";
 import { Progress } from "@/components/ui/progress";
+import type { TaskSubtask } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,18 @@ export default async function TareasPage() {
     );
   }
 
-  const tasks = await getTasks();
+  const [tasks, allSubtasks] = await Promise.all([
+    getTasks(),
+    getTaskSubtasks(),
+  ]);
+
+  const subtasksByTask = new Map<string, TaskSubtask[]>();
+  for (const s of allSubtasks) {
+    const list = subtasksByTask.get(s.task_id);
+    if (list) list.push(s);
+    else subtasksByTask.set(s.task_id, [s]);
+  }
+
   const pending = tasks.filter((t) => !t.is_done);
   const done = tasks.filter((t) => t.is_done);
   const pct = tasks.length ? (done.length / tasks.length) * 100 : 0;
@@ -51,7 +63,13 @@ export default async function TareasPage() {
             ¡Todo hecho! 🎉
           </p>
         ) : (
-          pending.map((t) => <TaskItem key={t.id} task={t} />)
+          pending.map((t) => (
+            <TaskItem
+              key={t.id}
+              task={t}
+              subtasks={subtasksByTask.get(t.id) ?? []}
+            />
+          ))
         )}
       </section>
 
@@ -61,7 +79,11 @@ export default async function TareasPage() {
             Completadas ({done.length})
           </h2>
           {done.map((t) => (
-            <TaskItem key={t.id} task={t} />
+            <TaskItem
+              key={t.id}
+              task={t}
+              subtasks={subtasksByTask.get(t.id) ?? []}
+            />
           ))}
         </section>
       )}

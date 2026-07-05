@@ -6,6 +6,7 @@ import type {
   ItineraryDay,
   PackingItem,
   Task,
+  TaskSubtask,
   TripDocument,
   TripSettings,
 } from "@/lib/types";
@@ -40,6 +41,16 @@ export async function getTasks(): Promise<Task[]> {
     .order("is_done", { ascending: true })
     .order("due_date", { ascending: true, nullsFirst: false })
     .order("sort_order", { ascending: true });
+  return data ?? [];
+}
+
+export async function getTaskSubtasks(): Promise<TaskSubtask[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("task_subtasks")
+    .select("*")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
   return data ?? [];
 }
 

@@ -29,6 +29,15 @@ export interface Task {
   created_at: string;
 }
 
+export interface TaskSubtask {
+  id: string;
+  task_id: string;
+  title: string;
+  is_done: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
 export interface ItineraryDay {
   id: string;
   day_number: number;

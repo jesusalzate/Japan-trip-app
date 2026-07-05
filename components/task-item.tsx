@@ -1,18 +1,26 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { Check, ChevronDown, Pencil, Trash2, X } from "lucide-react";
 import { toggleTask, deleteTask, updateTaskDetails } from "@/app/actions";
 import { TASK_CATEGORIES, daysUntil, formatShort } from "@/lib/trip";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input, Select, Textarea } from "@/components/ui/input";
-import type { Task, TaskCategory } from "@/lib/types";
+import { SubtaskList } from "@/components/subtask-list";
+import type { Task, TaskCategory, TaskSubtask } from "@/lib/types";
 
-export function TaskItem({ task }: { task: Task }) {
+export function TaskItem({
+  task,
+  subtasks,
+}: {
+  task: Task;
+  subtasks: TaskSubtask[];
+}) {
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState(false);
+  const [showSubtasks, setShowSubtasks] = useState(false);
   const [values, setValues] = useState({
     title: task.title,
     description: task.description ?? "",
@@ -89,6 +97,7 @@ export function TaskItem({ task }: { task: Task }) {
   const due = task.due_date ? new Date(task.due_date) : null;
   const left = due ? daysUntil(due) : null;
   const overdue = !task.is_done && left !== null && left < 0;
+  const doneSubtasks = subtasks.filter((s) => s.is_done).length;
 
   return (
     <div
@@ -137,6 +146,25 @@ export function TaskItem({ task }: { task: Task }) {
                 <span className="text-warning"> · en {left} d</span>
               )}
             </span>
+          )}
+        </div>
+
+        <div className="mt-1.5 border-t border-border pt-1.5">
+          <button
+            onClick={() => setShowSubtasks((v) => !v)}
+            className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform",
+                !showSubtasks && "-rotate-90",
+              )}
+            />
+            Subtareas
+            {subtasks.length > 0 && ` · ${doneSubtasks}/${subtasks.length}`}
+          </button>
+          {showSubtasks && (
+            <SubtaskList taskId={task.id} subtasks={subtasks} />
           )}
         </div>
       </div>

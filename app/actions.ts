@@ -76,6 +76,28 @@ export async function updateTaskDetails(
   revalidatePath("/");
 }
 
+// ---------------------- Subtareas ----------------------
+
+export async function addSubtask(taskId: string, formData: FormData) {
+  const { supabase } = await db();
+  const title = String(formData.get("title") ?? "").trim();
+  if (!title) return;
+  await supabase.from("task_subtasks").insert({ task_id: taskId, title });
+  revalidatePath("/tareas");
+}
+
+export async function toggleSubtask(id: string, isDone: boolean) {
+  const { supabase } = await db();
+  await supabase.from("task_subtasks").update({ is_done: isDone }).eq("id", id);
+  revalidatePath("/tareas");
+}
+
+export async function deleteSubtask(id: string) {
+  const { supabase } = await db();
+  await supabase.from("task_subtasks").delete().eq("id", id);
+  revalidatePath("/tareas");
+}
+
 // ---------------------- Itinerario ----------------------
 
 export async function updateDayNotes(id: string, notes: string) {

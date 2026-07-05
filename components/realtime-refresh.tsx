@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
  */
 const TABLES = [
   "tasks",
+  "task_subtasks",
   "itinerary_days",
   "itinerary_activities",
   "budget_items",

@@ -7,7 +7,8 @@ y guarda las **reservas y documentos** en la nube.
 **Incluye:**
 
 - 🏠 **Inicio** — cuenta atrás, progreso de preparativos y resumen del presupuesto.
-- ✅ **Tareas** — lista de cosas por hacer con fechas límite (vuelos, visado, entradas…).
+- ✅ **Tareas** — lista de cosas por hacer con fechas límite (vuelos, visado, entradas…),
+  cada una con su propio **checklist de subtareas**.
 - 🗺️ **Itinerario** — días editables (título, ciudad, resumen) con actividades, transporte y
   notas; se pueden **añadir o eliminar días** según vayamos concretando el plan.
 - 💶 **Presupuesto** — previsto vs. real (~5.770 €), marcar lo ya pagado.
@@ -34,7 +35,7 @@ desplegarse gratis en **Vercel**.
 
 ### 2) Crear las tablas y cargar los datos del viaje
 
-Ejecuta estos cuatro scripts **en este orden**, cada uno en una **New query** nueva del
+Ejecuta estos cinco scripts **en este orden**, cada uno en una **New query** nueva del
 **SQL Editor** (icono `</>` en el menú lateral) → pega el contenido completo → **Run**:
 
 1. [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) — crea las tablas,
@@ -45,11 +46,13 @@ Ejecuta estos cuatro scripts **en este orden**, cada uno en una **New query** nu
    permite añadir y eliminar días del itinerario desde la app.
 4. [`supabase/seed.sql`](supabase/seed.sql) — carga el itinerario, las tareas, el presupuesto y
    las listas.
+5. [`supabase/migrations/0004_task_subtasks.sql`](supabase/migrations/0004_task_subtasks.sql) —
+   añade las subtareas (checklist) dentro de cada tarea.
 
 Cada uno debe terminar sin errores antes de pasar al siguiente.
 
 > ¿Ya tenías la app funcionando y solo quieres añadir alguna novedad? Ejecuta únicamente el
-> script correspondiente (2 o 3) — son seguros de repetir o ejecutar sobre datos ya cargados.
+> script correspondiente (2, 3 o 5) — son seguros de repetir o ejecutar sobre datos ya cargados.
 
 ### 3) Crear nuestras dos cuentas y cerrar el registro
 
@@ -131,6 +134,7 @@ supabase/
   migrations/0001_schema.sql   Tablas, seguridad (RLS), realtime y almacenamiento
   migrations/0002_itinerary_transport.sql   Campo de transporte por día
   migrations/0003_itinerary_day_management.sql   Añadir/eliminar días del itinerario
+  migrations/0004_task_subtasks.sql   Subtareas (checklist) dentro de cada tarea
   seed.sql                     Contenido del viaje (itinerario, tareas, presupuesto, listas)
 ```
 
