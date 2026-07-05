@@ -34,7 +34,7 @@ export default async function PresupuestoPage() {
       <div>
         <h1 className="text-xl font-bold">Presupuesto</h1>
         <p className="text-sm text-muted-foreground">
-          Para dos personas · 15 días · octubre
+          Para dos personas · octubre
         </p>
       </div>
 

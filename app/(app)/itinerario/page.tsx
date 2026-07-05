@@ -1,10 +1,8 @@
-import Link from "next/link";
-import { ChevronRight, MapPin, TrainFront } from "lucide-react";
 import { getItineraryDays, getTripSettings, isConfigured } from "@/lib/data";
-import { Badge } from "@/components/ui/badge";
 import { SetupNotice } from "@/components/setup-notice";
-import { cityColor, dayDate, formatShort } from "@/lib/trip";
-import { cn } from "@/lib/utils";
+import { AddDayButton } from "@/components/add-day-button";
+import { ItineraryDayRow } from "@/components/itinerary-day-row";
+import { dayDate, formatShort } from "@/lib/trip";
 
 export const dynamic = "force-dynamic";
 
@@ -28,56 +26,34 @@ export default async function ItinerarioPage() {
       <div>
         <h1 className="text-xl font-bold">Itinerario</h1>
         <p className="text-sm text-muted-foreground">
-          15 días · Tokio → Hakone → Kioto → Osaka → Hiroshima
+          {days.length} {days.length === 1 ? "día" : "días"} · toca uno para
+          ver o editar los detalles
         </p>
       </div>
 
-      <ol className="space-y-2.5">
-        {days.map((day) => {
-          const date = dayDate(settings.start_date, day.day_number);
-          return (
-            <li key={day.id}>
-              <Link
-                href={`/itinerario/${day.day_number}`}
-                className="flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted"
-              >
-                <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-md bg-primary/10 text-primary">
-                  <span className="text-[10px] font-medium uppercase">Día</span>
-                  <span className="text-lg font-bold leading-none">
-                    {day.day_number}
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    {day.city && (
-                      <Badge className={cn("shrink-0", cityColor(day.city))}>
-                        <MapPin className="mr-0.5 h-3 w-3" />
-                        {day.city}
-                      </Badge>
-                    )}
-                    <span className="truncate text-xs text-muted-foreground">
-                      {formatShort(date)}
-                    </span>
-                  </div>
-                  <p className="mt-1 truncate text-sm font-medium">{day.title}</p>
-                  {day.summary && (
-                    <p className="truncate text-xs text-muted-foreground">
-                      {day.summary}
-                    </p>
-                  )}
-                  {day.transport && (
-                    <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted-foreground">
-                      <TrainFront className="h-3 w-3 shrink-0" />
-                      {day.transport}
-                    </p>
-                  )}
-                </div>
-                <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
-              </Link>
-            </li>
-          );
-        })}
-      </ol>
+      <AddDayButton
+        afterDayNumber={0}
+        label={days.length === 0 ? "Añadir el primer día" : "Añadir día al principio"}
+      />
+
+      {days.length === 0 ? (
+        <p className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          Todavía no hay días en el itinerario.
+        </p>
+      ) : (
+        <ol className="space-y-2.5">
+          {days.map((day) => {
+            const date = dayDate(settings.start_date, day.day_number);
+            return (
+              <ItineraryDayRow
+                key={day.id}
+                day={day}
+                dateLabel={formatShort(date)}
+              />
+            );
+          })}
+        </ol>
+      )}
     </div>
   );
 }

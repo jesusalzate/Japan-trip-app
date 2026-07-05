@@ -108,6 +108,20 @@ export async function updateDayDetails(
   revalidatePath("/itinerario");
 }
 
+export async function addItineraryDay(afterDayNumber: number) {
+  const { supabase } = await db();
+  await supabase.rpc("insert_itinerary_day", {
+    p_after_day_number: afterDayNumber,
+  });
+  revalidatePath("/itinerario");
+}
+
+export async function deleteItineraryDay(dayNumber: number) {
+  const { supabase } = await db();
+  await supabase.rpc("delete_itinerary_day", { p_day_number: dayNumber });
+  revalidatePath("/itinerario");
+}
+
 export async function toggleActivity(id: string, isDone: boolean) {
   const { supabase } = await db();
   await supabase.from("itinerary_activities").update({ is_done: isDone }).eq("id", id);

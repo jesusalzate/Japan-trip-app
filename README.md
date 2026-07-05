@@ -8,8 +8,8 @@ y guarda las **reservas y documentos** en la nube.
 
 - 🏠 **Inicio** — cuenta atrás, progreso de preparativos y resumen del presupuesto.
 - ✅ **Tareas** — lista de cosas por hacer con fechas límite (vuelos, visado, entradas…).
-- 🗺️ **Itinerario** — los 15 días, editables (título, ciudad, resumen), con actividades,
-  transporte y notas por día.
+- 🗺️ **Itinerario** — días editables (título, ciudad, resumen) con actividades, transporte y
+  notas; se pueden **añadir o eliminar días** según vayamos concretando el plan.
 - 💶 **Presupuesto** — previsto vs. real (~5.770 €), marcar lo ya pagado.
 - 🧳 **Equipaje** — checklist de la maleta y de los **documentos del visado**.
 - 📁 **Documentos** — subir y abrir los archivos (vuelos, hoteles, visado, seguro, pasaportes).
@@ -34,21 +34,22 @@ desplegarse gratis en **Vercel**.
 
 ### 2) Crear las tablas y cargar los datos del viaje
 
-Ejecuta estos tres scripts **en este orden**, cada uno en una **New query** nueva del
+Ejecuta estos cuatro scripts **en este orden**, cada uno en una **New query** nueva del
 **SQL Editor** (icono `</>` en el menú lateral) → pega el contenido completo → **Run**:
 
 1. [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) — crea las tablas,
    la seguridad (RLS) y el almacenamiento de documentos.
 2. [`supabase/migrations/0002_itinerary_transport.sql`](supabase/migrations/0002_itinerary_transport.sql) —
    añade el campo de transporte de cada día del itinerario.
-3. [`supabase/seed.sql`](supabase/seed.sql) — carga el itinerario, las tareas, el presupuesto y
+3. [`supabase/migrations/0003_itinerary_day_management.sql`](supabase/migrations/0003_itinerary_day_management.sql) —
+   permite añadir y eliminar días del itinerario desde la app.
+4. [`supabase/seed.sql`](supabase/seed.sql) — carga el itinerario, las tareas, el presupuesto y
    las listas.
 
 Cada uno debe terminar sin errores antes de pasar al siguiente.
 
-> ¿Ya tenías la app funcionando y solo quieres añadir la novedad del transporte? Ejecuta
-> únicamente el paso 2 (`0002_itinerary_transport.sql`) — es seguro repetirlo o ejecutarlo
-> sobre datos ya cargados.
+> ¿Ya tenías la app funcionando y solo quieres añadir alguna novedad? Ejecuta únicamente el
+> script correspondiente (2 o 3) — son seguros de repetir o ejecutar sobre datos ya cargados.
 
 ### 3) Crear nuestras dos cuentas y cerrar el registro
 
@@ -129,6 +130,7 @@ lib/
 supabase/
   migrations/0001_schema.sql   Tablas, seguridad (RLS), realtime y almacenamiento
   migrations/0002_itinerary_transport.sql   Campo de transporte por día
+  migrations/0003_itinerary_day_management.sql   Añadir/eliminar días del itinerario
   seed.sql                     Contenido del viaje (itinerario, tareas, presupuesto, listas)
 ```
 

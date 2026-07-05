@@ -172,7 +172,7 @@ export default async function InicioPage() {
           <Progress value={budgetPct} />
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-            Para dos personas · 15 días
+            Para dos personas
           </p>
         </CardContent>
       </Card>
