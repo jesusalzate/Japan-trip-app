@@ -22,11 +22,8 @@ export function ItineraryDayRow({
   function onInsert() {
     start(async () => {
       setError(null);
-      try {
-        await addItineraryDay(day.day_number);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Error desconocido");
-      }
+      const result = await addItineraryDay(day.day_number);
+      if (!result.ok) setError(result.message);
     });
   }
 
@@ -37,11 +34,8 @@ export function ItineraryDayRow({
     if (!ok) return;
     start(async () => {
       setError(null);
-      try {
-        await deleteItineraryDay(day.day_number);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Error desconocido");
-      }
+      const result = await deleteItineraryDay(day.day_number);
+      if (!result.ok) setError(result.message);
     });
   }
 

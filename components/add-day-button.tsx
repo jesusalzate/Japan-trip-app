@@ -24,11 +24,8 @@ export function AddDayButton({
         onClick={() =>
           start(async () => {
             setError(null);
-            try {
-              await addItineraryDay(afterDayNumber);
-            } catch (e) {
-              setError(e instanceof Error ? e.message : "Error desconocido");
-            }
+            const result = await addItineraryDay(afterDayNumber);
+            if (!result.ok) setError(result.message);
           })
         }
       >

@@ -130,26 +130,37 @@ export async function updateDayDetails(
   revalidatePath("/itinerario");
 }
 
-export async function addItineraryDay(afterDayNumber: number) {
+type ActionResult = { ok: true } | { ok: false; message: string };
+
+export async function addItineraryDay(
+  afterDayNumber: number,
+): Promise<ActionResult> {
   const { supabase } = await db();
   const { error } = await supabase.rpc("insert_itinerary_day", {
     p_after_day_number: afterDayNumber,
   });
   if (error) {
-    throw new Error(`No se pudo añadir el día: ${error.message}`);
+    return { ok: false, message: `No se pudo añadir el día: ${error.message}` };
   }
   revalidatePath("/itinerario");
+  return { ok: true };
 }
 
-export async function deleteItineraryDay(dayNumber: number) {
+export async function deleteItineraryDay(
+  dayNumber: number,
+): Promise<ActionResult> {
   const { supabase } = await db();
   const { error } = await supabase.rpc("delete_itinerary_day", {
     p_day_number: dayNumber,
   });
   if (error) {
-    throw new Error(`No se pudo eliminar el día: ${error.message}`);
+    return {
+      ok: false,
+      message: `No se pudo eliminar el día: ${error.message}`,
+    };
   }
   revalidatePath("/itinerario");
+  return { ok: true };
 }
 
 export async function toggleActivity(id: string, isDone: boolean) {
