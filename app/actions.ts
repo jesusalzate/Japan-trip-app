@@ -59,6 +59,30 @@ export async function updateDayNotes(id: string, notes: string) {
   revalidatePath("/itinerario");
 }
 
+export async function updateDayTransport(id: string, transport: string) {
+  const { supabase } = await db();
+  await supabase.from("itinerary_days").update({ transport }).eq("id", id);
+  revalidatePath("/itinerario");
+}
+
+export async function updateDayDetails(
+  id: string,
+  data: { title: string; city: string; summary: string },
+) {
+  const { supabase } = await db();
+  const title = data.title.trim();
+  if (!title) return;
+  await supabase
+    .from("itinerary_days")
+    .update({
+      title,
+      city: data.city.trim() || null,
+      summary: data.summary.trim() || null,
+    })
+    .eq("id", id);
+  revalidatePath("/itinerario");
+}
+
 export async function toggleActivity(id: string, isDone: boolean) {
   const { supabase } = await db();
   await supabase.from("itinerary_activities").update({ is_done: isDone }).eq("id", id);

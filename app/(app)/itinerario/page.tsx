@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, MapPin } from "lucide-react";
+import { ChevronRight, MapPin, TrainFront } from "lucide-react";
 import { getItineraryDays, getTripSettings, isConfigured } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { SetupNotice } from "@/components/setup-notice";
@@ -63,6 +63,12 @@ export default async function ItinerarioPage() {
                   {day.summary && (
                     <p className="truncate text-xs text-muted-foreground">
                       {day.summary}
+                    </p>
+                  )}
+                  {day.transport && (
+                    <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted-foreground">
+                      <TrainFront className="h-3 w-3 shrink-0" />
+                      {day.transport}
                     </p>
                   )}
                 </div>

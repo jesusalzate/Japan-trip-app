@@ -36,6 +36,7 @@ export interface ItineraryDay {
   city: string | null;
   summary: string | null;
   notes: string | null;
+  transport: string | null;
   sort_order: number;
 }
 

@@ -1,7 +1,7 @@
 -- =====================================================================
 --  Viaje a Japón — Datos iniciales (seed)
 --  Idempotente: cada bloque solo inserta si su tabla está vacía.
---  Ejecutar DESPUÉS de 0001_schema.sql.
+--  Ejecutar DESPUÉS de 0001_schema.sql y 0002_itinerary_transport.sql.
 -- =====================================================================
 
 -- ----------------------- Ajustes del viaje ---------------------------
@@ -10,22 +10,22 @@ select 'Viaje a Japón', '2026-10-01', 5770.42, 'EUR'
 where not exists (select 1 from public.trip_settings);
 
 -- --------------------------- Itinerario ------------------------------
-insert into public.itinerary_days (day_number, title, city, summary, sort_order) values
-  (1,  'Salida de España',        'Vuelo',                  'Vuelo nocturno de larga distancia (Madrid–Tokio).', 1),
-  (2,  'Llegada a Tokio',         'Tokio',                  'Llegada (Haneda/Narita) y registro en el hotel (Otsuka/Shinjuku).', 2),
-  (3,  'Shibuya',                 'Tokio',                  'Cruce de Shibuya y mirador Shibuya Sky.', 3),
-  (4,  'Meiji y Shinjuku',        'Tokio',                  'Santuario Meiji Jingu, Harajuku, Omotesando y Shinjuku Gyoen.', 4),
-  (5,  'Asakusa y teamLab',       'Tokio',                  'Templo Senso-ji (Asakusa) y museo teamLab Planets (Toyosu).', 5),
-  (6,  'Hakone y onsen',          'Hakone',                 'Crucero por el lago Ashi y noche en ryokan tradicional con onsen.', 6),
-  (7,  'Llegada a Kioto',         'Kioto',                  'Shinkansen a Kioto y paseo nocturno por el barrio de Gion.', 7),
-  (8,  'Kiyomizu y Fushimi Inari','Kioto',                  'Kiyomizu-dera, Sannenzaka y santuario Fushimi Inari Taisha.', 8),
-  (9,  'Templos y bambú',         'Kioto',                  'Daigo-ji (follaje otoñal), Kinkaku-ji y bosque de bambú.', 9),
-  (10, 'Nara y Osaka',            'Nara / Osaka',           'Gran Buda de Nara y traslado nocturno a Osaka (Dotonbori).', 10),
-  (11, 'Osaka',                   'Osaka',                  'Castillo de Osaka, barrio retro Shinsekai y mirador Umeda Sky.', 11),
-  (12, 'Hiroshima y Miyajima',    'Hiroshima / Miyajima',   'Parque de la Paz e isla de Miyajima (excursión de día completo).', 12),
-  (13, 'Universal o Himeji',      'Osaka',                  'Universal Studios Japan o escapada al castillo de Himeji.', 13),
-  (14, 'Regreso a Tokio',         'Tokio',                  'Shinkansen de vuelta a Tokio y últimas compras en Akihabara.', 14),
-  (15, 'Vuelta a casa',           'Tokio',                  'Traslado al aeropuerto y vuelo de regreso a España.', 15)
+insert into public.itinerary_days (day_number, title, city, summary, transport, sort_order) values
+  (1,  'Salida de España',        'Vuelo',                  'Vuelo nocturno de larga distancia (Madrid–Tokio).', 'Billete aéreo internacional (Madrid–Tokio).', 1),
+  (2,  'Llegada a Tokio',         'Tokio',                  'Llegada (Haneda/Narita) y registro en el hotel (Otsuka/Shinjuku).', 'Tren expreso al centro (N''EX / Monorraíl).', 2),
+  (3,  'Shibuya',                 'Tokio',                  'Cruce de Shibuya y mirador Shibuya Sky.', 'Metro de Tokio (pase de 72 horas).', 3),
+  (4,  'Meiji y Shinjuku',        'Tokio',                  'Santuario Meiji Jingu, Harajuku, Omotesando y Shinjuku Gyoen.', 'Metro de Tokio (pase de 72 horas).', 4),
+  (5,  'Asakusa y teamLab',       'Tokio',                  'Templo Senso-ji (Asakusa) y museo teamLab Planets (Toyosu).', 'Metro de Tokio + tren Yurikamome (a Toyosu).', 5),
+  (6,  'Hakone y onsen',          'Hakone',                 'Crucero por el lago Ashi y noche en ryokan tradicional con onsen.', 'Tren Odakyu Romancecar (a Hakone).', 6),
+  (7,  'Llegada a Kioto',         'Kioto',                  'Shinkansen a Kioto y paseo nocturno por el barrio de Gion.', 'Tren bala Tokaido Shinkansen (a Kioto).', 7),
+  (8,  'Kiyomizu y Fushimi Inari','Kioto',                  'Kiyomizu-dera, Sannenzaka y santuario Fushimi Inari Taisha.', 'Autobús y líneas locales de Kioto.', 8),
+  (9,  'Templos y bambú',         'Kioto',                  'Daigo-ji (follaje otoñal), Kinkaku-ji y bosque de bambú.', 'Autobús y líneas locales de Kioto.', 9),
+  (10, 'Nara y Osaka',            'Nara / Osaka',           'Gran Buda de Nara y traslado nocturno a Osaka (Dotonbori).', 'Tren local JR (pase Kansai-Hiroshima).', 10),
+  (11, 'Osaka',                   'Osaka',                  'Castillo de Osaka, barrio retro Shinsekai y mirador Umeda Sky.', 'Tren local JR (pase Kansai-Hiroshima).', 11),
+  (12, 'Hiroshima y Miyajima',    'Hiroshima / Miyajima',   'Parque de la Paz e isla de Miyajima (excursión de día completo).', 'Shinkansen y ferry JR (pase regional).', 12),
+  (13, 'Universal o Himeji',      'Osaka',                  'Universal Studios Japan o escapada al castillo de Himeji.', 'Tren local JR (pase Kansai-Hiroshima).', 13),
+  (14, 'Regreso a Tokio',         'Tokio',                  'Shinkansen de vuelta a Tokio y últimas compras en Akihabara.', 'Tren bala Tokaido Shinkansen (a Tokio).', 14),
+  (15, 'Vuelta a casa',           'Tokio',                  'Traslado al aeropuerto y vuelo de regreso a España.', 'Tren expreso al aeropuerto / billete aéreo.', 15)
 on conflict (day_number) do nothing;
 
 -- ----------------- Actividades destacadas por día --------------------
