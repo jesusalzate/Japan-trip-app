@@ -43,7 +43,10 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/auth") ||
     path.startsWith("/manifest") ||
     path.startsWith("/icons") ||
-    path === "/sw.js";
+    path === "/sw.js" ||
+    // Los cron jobs de Vercel no tienen sesión de usuario; se autorizan
+    // con su propio secreto compartido dentro de cada route handler.
+    path.startsWith("/api/cron/");
 
   if (!user && !isPublic) {
     const redirectUrl = request.nextUrl.clone();

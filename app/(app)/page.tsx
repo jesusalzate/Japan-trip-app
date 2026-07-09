@@ -77,7 +77,11 @@ export default async function InicioPage() {
       </Card>
 
       {/* Conversor de moneda */}
-      <CurrencyConverter settingsId={settings.id} rate={settings.yen_rate} />
+      <CurrencyConverter
+        settingsId={settings.id}
+        rate={settings.yen_rate}
+        updatedAt={settings.yen_rate_updated_at}
+      />
 
       {/* Progreso de tareas */}
       <Card>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
 import { ArrowLeftRight, RefreshCw } from "lucide-react";
 import { updateYenRate } from "@/app/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,9 +13,11 @@ import { cn } from "@/lib/utils";
 export function CurrencyConverter({
   settingsId,
   rate,
+  updatedAt,
 }: {
   settingsId: string;
   rate: number;
+  updatedAt: string | null;
 }) {
   const [eur, setEur] = useState("100");
   const [jpy, setJpy] = useState(() => String(Math.round(100 * rate)));
@@ -70,6 +74,10 @@ export function CurrencyConverter({
     });
   }
 
+  const updatedLabel = updatedAt
+    ? formatDistanceToNow(new Date(updatedAt), { locale: es, addSuffix: true })
+    : null;
+
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
@@ -78,8 +86,8 @@ export function CurrencyConverter({
           onClick={refreshRate}
           disabled={pending || !settingsId}
           className="text-muted-foreground hover:text-primary disabled:opacity-40"
-          aria-label="Actualizar tipo de cambio"
-          title="Actualizar tipo de cambio"
+          aria-label="Actualizar tipo de cambio ahora"
+          title="Actualizar tipo de cambio ahora"
         >
           <RefreshCw className={cn("h-4 w-4", pending && "animate-spin")} />
         </button>
@@ -136,17 +144,28 @@ export function CurrencyConverter({
             </Button>
           </div>
         ) : (
-          <button
-            onClick={() => {
-              setRateInput(String(rate));
-              setEditingRate(true);
-            }}
-            className="text-xs text-muted-foreground hover:text-foreground"
-          >
-            1 € = {rate.toLocaleString("es-ES", { maximumFractionDigits: 2 })} ¥
-            · editar manualmente
-          </button>
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => {
+                setRateInput(String(rate));
+                setEditingRate(true);
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              1 € = {rate.toLocaleString("es-ES", { maximumFractionDigits: 2 })} ¥
+              · editar
+            </button>
+            {updatedLabel && (
+              <span className="text-[11px] text-muted-foreground">
+                Actualizado {updatedLabel}
+              </span>
+            )}
+          </div>
         )}
+
+        <p className="text-[11px] text-muted-foreground">
+          Se actualiza solo una vez al día. Usa el botón 🔄 para forzarlo ahora.
+        </p>
 
         {error && (
           <p className="rounded-md bg-rose-50 px-3 py-2 text-xs text-rose-700">

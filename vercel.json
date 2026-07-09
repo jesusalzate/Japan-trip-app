@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/refresh-yen-rate",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

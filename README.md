@@ -7,7 +7,7 @@ y guarda las **reservas y documentos** en la nube.
 **Incluye:**
 
 - 🏠 **Inicio** — cuenta atrás, progreso de preparativos, resumen del presupuesto y un
-  **conversor € / ¥** rápido.
+  **conversor € / ¥** rápido con tipo de cambio que se **actualiza solo cada día**.
 - ✅ **Tareas** — lista de cosas por hacer con fechas límite (vuelos, visado, entradas…),
   cada una con su propio **checklist de subtareas**.
 - 🗺️ **Itinerario** — días editables (título, ciudad, resumen) con actividades, transporte y
@@ -86,8 +86,21 @@ Cada uno debe terminar sin errores antes de pasar al siguiente.
    > Si tu proyecto usa la clave clásica `anon` (empieza por `eyJ…`), puedes ponerla en
    > `NEXT_PUBLIC_SUPABASE_ANON_KEY`; la app acepta ambos nombres.
 
-4. Pulsa **Deploy**. En un par de minutos tendrás una dirección tipo
-   `https://viaje-japon.vercel.app`.
+4. **(Opcional)** Para que el tipo de cambio se actualice **solo, una vez al día**, añade
+   también estas dos variables:
+
+   | Nombre | Valor |
+   |---|---|
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → **Project Settings → API** → clave **service_role** (⚠️ secreta: no la pongas nunca con el prefijo `NEXT_PUBLIC_`) |
+   | `CRON_SECRET` | Cualquier cadena aleatoria larga que inventes tú (p. ej. generada en <https://1password.com/password-generator>) |
+
+   Sin estas dos variables la app funciona exactamente igual, solo que el tipo de cambio
+   habrá que refrescarlo a mano con el botón 🔄 del conversor.
+
+5. Pulsa **Deploy**. En un par de minutos tendrás una dirección tipo
+   `https://viaje-japon.vercel.app`. El archivo `vercel.json` del proyecto ya programa la
+   actualización diaria automáticamente (gratis en el plan Hobby, que permite tareas
+   programadas de hasta una vez al día).
 
 ### 5) Decirle a Supabase cuál es la dirección de la app
 
@@ -126,10 +139,13 @@ npm run lint    # revisa el código
 - Los datos del viaje son **compartidos** entre los dos (lo que edita uno lo ve el otro).
 - Los documentos viven en un bucket **privado**; se abren con enlaces firmados temporales.
 - La seguridad a nivel de fila (RLS) está activada: sin sesión no se accede a nada.
-- El botón "Actualizar" del conversor de moneda consulta un servicio externo gratuito
-  ([Frankfurter](https://www.frankfurter.app/), datos del BCE, sin necesidad de clave) solo
-  para obtener el tipo de cambio EUR→JPY; no se envían datos del viaje. También puedes
-  escribir el tipo de cambio a mano si lo prefieres.
+- El tipo de cambio (automático diario y el botón manual) consulta un servicio externo
+  gratuito ([Frankfurter](https://www.frankfurter.app/), datos del BCE, sin necesidad de
+  clave) solo para obtener EUR→JPY; no se envían datos del viaje. También puedes escribir
+  el tipo de cambio a mano si lo prefieres.
+- La clave `SUPABASE_SERVICE_ROLE_KEY` (si la configuras) **solo** vive en las variables de
+  entorno del servidor de Vercel, nunca llega al navegador, y solo la usa la tarea
+  programada diaria para escribir el tipo de cambio.
 
 ## 🗂️ Estructura del proyecto
 
@@ -137,6 +153,8 @@ npm run lint    # revisa el código
 app/                 Páginas (Inicio, Tareas, Itinerario, Presupuesto, Equipaje, Documentos)
   (app)/             Zona privada (requiere sesión)
   login/             Inicio de sesión
+  api/exchange-rate/         Consulta el tipo de cambio actual (botón manual)
+  api/cron/refresh-yen-rate/ Actualiza el tipo de cambio una vez al día (cron de Vercel)
   actions.ts         Acciones de servidor (crear/editar/borrar)
 components/          Componentes de interfaz
 lib/
@@ -151,6 +169,7 @@ supabase/
   migrations/0005_fix_day_functions_where_clause.sql   Corrige el error "UPDATE requires a WHERE clause"
   migrations/0006_add_yen_rate.sql   Tipo de cambio para el conversor € / ¥
   seed.sql                     Contenido del viaje (itinerario, tareas, presupuesto, listas)
+vercel.json          Programa la actualización diaria del tipo de cambio
 ```
 
 > ¿Cambia la fecha de salida? Ajústala en **Inicio → Cambiar fecha de salida**; todas las
