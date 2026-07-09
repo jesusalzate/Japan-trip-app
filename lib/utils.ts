@@ -16,3 +16,13 @@ export function formatEUR(amount: number | null | undefined): string {
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+/** Formatea un importe en yenes (es-ES, sin decimales: el yen no los usa). */
+export function formatJPY(amount: number | null | undefined): string {
+  const value = typeof amount === "number" && Number.isFinite(amount) ? amount : 0;
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "JPY",
+    maximumFractionDigits: 0,
+  }).format(value);
+}

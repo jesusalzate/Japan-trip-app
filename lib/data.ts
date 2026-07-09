@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { DEFAULT_YEN_RATE } from "@/lib/currency";
 import type {
   BudgetItem,
   ItineraryActivity,
@@ -21,16 +22,19 @@ const DEFAULT_START = "2026-10-01";
 export async function getTripSettings(): Promise<TripSettings> {
   const supabase = await createClient();
   const { data } = await supabase.from("trip_settings").select("*").limit(1).single();
-  return (
-    data ?? {
-      id: "",
-      trip_name: "Viaje a Japón",
-      start_date: DEFAULT_START,
-      total_budget: 5770.42,
-      currency: "EUR",
-      updated_at: "",
-    }
-  );
+  return {
+    id: "",
+    trip_name: "Viaje a Japón",
+    start_date: DEFAULT_START,
+    total_budget: 5770.42,
+    currency: "EUR",
+    yen_rate_updated_at: null,
+    updated_at: "",
+    ...data,
+    // Si la fila existe pero aún no se ha aplicado la migración del tipo
+    // de cambio, la columna no vendrá en la respuesta: usa el valor por defecto.
+    yen_rate: data?.yen_rate ?? DEFAULT_YEN_RATE,
+  };
 }
 
 export async function getTasks(): Promise<Task[]> {

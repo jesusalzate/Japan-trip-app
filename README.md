@@ -6,12 +6,14 @@ y guarda las **reservas y documentos** en la nube.
 
 **Incluye:**
 
-- 🏠 **Inicio** — cuenta atrás, progreso de preparativos y resumen del presupuesto.
+- 🏠 **Inicio** — cuenta atrás, progreso de preparativos, resumen del presupuesto y un
+  **conversor € / ¥** rápido.
 - ✅ **Tareas** — lista de cosas por hacer con fechas límite (vuelos, visado, entradas…),
   cada una con su propio **checklist de subtareas**.
 - 🗺️ **Itinerario** — días editables (título, ciudad, resumen) con actividades, transporte y
   notas; se pueden **añadir o eliminar días** según vayamos concretando el plan.
-- 💶 **Presupuesto** — previsto vs. real (~5.770 €), marcar lo ya pagado.
+- 💶 **Presupuesto** — previsto vs. real (~5.770 €) con su equivalente en yenes, marcar lo
+  ya pagado.
 - 🧳 **Equipaje** — checklist de la maleta y de los **documentos del visado**.
 - 📁 **Documentos** — subir y abrir los archivos (vuelos, hoteles, visado, seguro, pasaportes).
 
@@ -35,7 +37,7 @@ desplegarse gratis en **Vercel**.
 
 ### 2) Crear las tablas y cargar los datos del viaje
 
-Ejecuta estos seis scripts **en este orden**, cada uno en una **New query** nueva del
+Ejecuta estos siete scripts **en este orden**, cada uno en una **New query** nueva del
 **SQL Editor** (icono `</>` en el menú lateral) → pega el contenido completo → **Run**:
 
 1. [`supabase/migrations/0001_schema.sql`](supabase/migrations/0001_schema.sql) — crea las tablas,
@@ -50,11 +52,14 @@ Ejecuta estos seis scripts **en este orden**, cada uno en una **New query** nuev
    añade las subtareas (checklist) dentro de cada tarea.
 6. [`supabase/migrations/0005_fix_day_functions_where_clause.sql`](supabase/migrations/0005_fix_day_functions_where_clause.sql) —
    corrige un error ("UPDATE requires a WHERE clause") al añadir/eliminar días.
+7. [`supabase/migrations/0006_add_yen_rate.sql`](supabase/migrations/0006_add_yen_rate.sql) —
+   añade el tipo de cambio para el conversor € / ¥ y el presupuesto en yenes.
 
 Cada uno debe terminar sin errores antes de pasar al siguiente.
 
 > ¿Ya tenías la app funcionando y solo quieres añadir alguna novedad? Ejecuta únicamente el
-> script correspondiente (2, 3, 5 o 6) — son seguros de repetir o ejecutar sobre datos ya cargados.
+> script correspondiente (2, 3, 5, 6 o 7) — son seguros de repetir o ejecutar sobre datos ya
+> cargados.
 > **Si al añadir o eliminar un día del itinerario te sale el error "UPDATE requires a WHERE
 > clause"**, es porque falta ejecutar el script **6** — corrige justo eso.
 
@@ -121,6 +126,10 @@ npm run lint    # revisa el código
 - Los datos del viaje son **compartidos** entre los dos (lo que edita uno lo ve el otro).
 - Los documentos viven en un bucket **privado**; se abren con enlaces firmados temporales.
 - La seguridad a nivel de fila (RLS) está activada: sin sesión no se accede a nada.
+- El botón "Actualizar" del conversor de moneda consulta un servicio externo gratuito
+  ([Frankfurter](https://www.frankfurter.app/), datos del BCE, sin necesidad de clave) solo
+  para obtener el tipo de cambio EUR→JPY; no se envían datos del viaje. También puedes
+  escribir el tipo de cambio a mano si lo prefieres.
 
 ## 🗂️ Estructura del proyecto
 
@@ -140,6 +149,7 @@ supabase/
   migrations/0003_itinerary_day_management.sql   Añadir/eliminar días del itinerario
   migrations/0004_task_subtasks.sql   Subtareas (checklist) dentro de cada tarea
   migrations/0005_fix_day_functions_where_clause.sql   Corrige el error "UPDATE requires a WHERE clause"
+  migrations/0006_add_yen_rate.sql   Tipo de cambio para el conversor € / ¥
   seed.sql                     Contenido del viaje (itinerario, tareas, presupuesto, listas)
 ```
 

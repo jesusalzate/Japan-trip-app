@@ -4,11 +4,12 @@ import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
 import { updateBudgetActual, deleteBudgetItem } from "@/app/actions";
 import { BUDGET_CATEGORIES } from "@/lib/trip";
-import { formatEUR, cn } from "@/lib/utils";
+import { eurToJpy } from "@/lib/currency";
+import { formatEUR, formatJPY, cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import type { BudgetItem } from "@/lib/types";
 
-export function BudgetRow({ item }: { item: BudgetItem }) {
+export function BudgetRow({ item, rate }: { item: BudgetItem; rate: number }) {
   const [pending, start] = useTransition();
   const [actual, setActual] = useState(
     item.actual_amount != null ? String(item.actual_amount) : "",
@@ -18,6 +19,8 @@ export function BudgetRow({ item }: { item: BudgetItem }) {
     const num = actual.trim() === "" ? null : Number(actual);
     start(() => updateBudgetActual(item.id, num, nextPaid));
   }
+
+  const actualNum = actual.trim() === "" ? null : Number(actual);
 
   return (
     <div
@@ -32,6 +35,10 @@ export function BudgetRow({ item }: { item: BudgetItem }) {
           <p className="text-xs text-muted-foreground">
             {BUDGET_CATEGORIES[item.category]} · previsto{" "}
             {formatEUR(item.planned_amount)}
+            {" "}
+            <span className="text-muted-foreground/80">
+              (≈ {formatJPY(eurToJpy(item.planned_amount, rate))})
+            </span>
           </p>
         </div>
         <button
@@ -69,6 +76,11 @@ export function BudgetRow({ item }: { item: BudgetItem }) {
           Pagado
         </label>
       </div>
+      {actualNum !== null && Number.isFinite(actualNum) && (
+        <p className="mt-1 text-right text-[11px] text-muted-foreground">
+          ≈ {formatJPY(eurToJpy(actualNum, rate))}
+        </p>
+      )}
     </div>
   );
 }

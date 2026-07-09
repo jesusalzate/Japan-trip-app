@@ -14,6 +14,8 @@ export interface TripSettings {
   start_date: string; // YYYY-MM-DD
   total_budget: number;
   currency: string;
+  yen_rate: number; // yenes por 1 euro
+  yen_rate_updated_at: string | null;
   updated_at: string;
 }
 

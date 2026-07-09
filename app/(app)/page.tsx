@@ -11,8 +11,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { SetupNotice } from "@/components/setup-notice";
 import { TripStartEditor } from "@/components/trip-start-editor";
+import { CurrencyConverter } from "@/components/currency-converter";
 import { TASK_CATEGORIES, dayDate, daysUntil, formatLong, formatShort } from "@/lib/trip";
-import { formatEUR, cn } from "@/lib/utils";
+import { eurToJpy } from "@/lib/currency";
+import { formatEUR, formatJPY, cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +75,9 @@ export default async function InicioPage() {
           <TripStartEditor id={settings.id} startDate={settings.start_date} />
         </CardContent>
       </Card>
+
+      {/* Conversor de moneda */}
+      <CurrencyConverter settingsId={settings.id} rate={settings.yen_rate} />
 
       {/* Progreso de tareas */}
       <Card>
@@ -163,10 +168,16 @@ export default async function InicioPage() {
               <p className="text-lg font-bold text-success">
                 {formatEUR(paidTotal)}
               </p>
+              <p className="text-[11px] text-muted-foreground">
+                ≈ {formatJPY(eurToJpy(paidTotal, settings.yen_rate))}
+              </p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Presupuesto total</p>
               <p className="text-lg font-bold">{formatEUR(plannedTotal)}</p>
+              <p className="text-[11px] text-muted-foreground">
+                ≈ {formatJPY(eurToJpy(plannedTotal, settings.yen_rate))}
+              </p>
             </div>
           </div>
           <Progress value={budgetPct} />

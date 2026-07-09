@@ -261,6 +261,28 @@ export async function updateTripStart(id: string, startDate: string) {
   revalidatePath("/", "layout");
 }
 
+export async function updateYenRate(
+  id: string,
+  rate: number,
+): Promise<ActionResult> {
+  if (!Number.isFinite(rate) || rate <= 0) {
+    return { ok: false, message: "El tipo de cambio no es válido." };
+  }
+  const { supabase } = await db();
+  const { error } = await supabase
+    .from("trip_settings")
+    .update({ yen_rate: rate, yen_rate_updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (error) {
+    return {
+      ok: false,
+      message: `No se pudo actualizar el tipo de cambio: ${error.message}`,
+    };
+  }
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 // ---------------------- Documentos (metadatos) ----------------------
 
 export async function deleteDocument(id: string, storagePath: string) {
